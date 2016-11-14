@@ -28,6 +28,6 @@
 		<!--<menu name="scxxsscx_menu" label="实时查询" activity="scxxsscx" activity-method="scxxsscxIndex"
 			 category="monitor_management" roles="MANUFACTURING_MANAGEMENT_ROLE" description="实时查询" icon="button" weight="10"/>-->
 		<menu name="sbfhcx_menu" label="设备负荷查询" activity="sbnlfz" activity-method="sbnlfzcxIndex"
-			 category="monitor_management" roles="MANUFACTURING_MANAGEMENT_ROLE" description="设备负荷查询" icon="button" weight="30"/>
-	</menus>cd
+			 category="statement" roles="MANUFACTURING_MANAGEMENT_ROLE" description="设备负荷查询" icon="button" weight="40"/>
+	</menus>
 </module>
