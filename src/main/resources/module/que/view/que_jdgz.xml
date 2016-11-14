@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view name="que_jdgz" title="进度跟踪">
+	<normal-actions>
+		<button name="queryBtn" icon="icon-query" label="查询"  type="button" onClick="openQueryWindow"></button>
+	</normal-actions>
+	<table name="table_jgrw" scroll="false" minheight="430" url="/jdgz/table_jgrw?scrwbh=${scrw.scrwbh}"   layoutconstraint="md:12;sm:12;">
+		<column label="生产任务ID" name="scrwid" key="true" hidden="true"></column>
+		<column label="生产任务编号" name="scrwbh" hidden="true" ></column>
+		<column label="生产批号" name="scph" ></column>
+		<column label="名称" name="ljmc"  ></column>
+		<column label="零件图号" name="ljbh"  ></column>
+		<column label="任务数量" name="jgsl"  ></column>
+		<column label="已完成数量" name="ywcsl" hidden="true"></column>
+		<column label="任务计划开始日期" name="jgksrq" sortable="true"  type="date"></column>
+		<column label="任务计划完成日期" name="jgwcrq" sortable="true"  type="date"></column>
+		<column label="任务状态" name="scrwzt"></column>
+		<column label="完成进度" name="wcjd"  type="progress"></column>
+		<!-- <column label="计划执行情况" name="scrwzt_dm"  ></column>-->
+		<subtable scroll="false"  url="/jdgz/table_jgrwpcxx" onSelectRow="table_pcxxClickrow" layoutconstraint="md:12;sm:12;">
+			<column label="生产任务批次ID" name="scrwpcid" key="true" hidden="true"></column>
+			<column label="批次号" name="pcbh" hidden="true"></column>
+			<column label="生产批号" name="pcmc"></column>
+			<column label="批次名称" name="pcmc"></column>
+			<column label="批次计划开始日期" name="pcjhksrq" sortable="true"  type="date"></column>
+			<column label="批次计划完成日期" name="pcjhwcrq" sortable="true"  type="date"></column>
+			<column label="批次计划状态" name="pcjhzt"></column>
+			<column label="加工数量" name="pcsl"  ></column>
+			<column label="已完成数量" name="wxwcsl"></column>
+			<column label="约当产量" name="ywcsl"></column>
+			<column label="批次进度" name="wcjd" type="progress"></column>
+			<column label="尾序批次进度" name="wxwcjd" type="progress"  hidden="true"></column>
+		</subtable>
+	</table>
+	<bunch layoutconstraint="md:2;sm:2;md-offset:5;sm-offset:5">
+		<button name="backBtn" label="返回"  type="button" context="primary" onClick="backBtnClick"></button>
+	</bunch>
+	<modal name="gdModal" heading="工单进度" sizing="large" show="false" keyboard="true" >
+		<modal-body>
+			<table name="table_gdjd"  scroll="false" url="/jdgz/query_gdjd"
+				multiselect="false">
+				<column label="箱号" name="xh" width="180"></column>
+				<column label="工序名称" name="gxmc" width="180"></column>
+				<column label="计划开始时间" name="jhkssj" sortable="true" type="datetime" width="120"></column>
+				<column label="计划完成时间" name="jhjssj" sortable="true" type="datetime" width="120"></column>
+				<column label="加工数量" name="jgsl"></column>
+				<column label="已完成数量" name="gdywcsl" ></column>
+				<column label="工单进度" name="wcjd"  type="progress"></column>
+			</table>
+		</modal-body>
+		<modal-footer>
+			<button name="closeBtnClick" label="关闭" type="button" context="primary"  onClick="closeModalWindow"></button>
+		</modal-footer>
+	</modal>
+	<modal name="qyeryModal" heading="查询" sizing="large" show="false" keyboard="true"  onShown="resetQueryWindow">
+		<modal-body>
+			<form name="form-horizontal"  horizontal="true" layoutconstraint="md-offset:1">
+				<form-body>
+					<form-group>
+						<label for="query_scrwbh " text="生产任务编号" layoutconstraint="md:3;sm:3"/>
+						<text name="query_scrwbh" placeholder="生产任务编号"  layoutconstraint="md:7;sm:7;" bind="scrw.scrwbh"/>
+					</form-group>
+					<form-group>
+						<label for="query_ljmc " text="零件名称" layoutconstraint="md:3;sm:3"/>
+						<text name="query_ljmc" placeholder="请输入零件名称"  layoutconstraint="md:7;sm:7;"/>
+					</form-group>
+					<form-group>
+						<label for="query_ljbh" text="零件图号" layoutconstraint="md:3;sm:3"/>
+						<text name="query_ljbh" placeholder="请输入零件图号" layoutconstraint="md:7;sm:7;"/>
+					</form-group>
+					<form-group>
+						<label for="query_rwksStart" text="任务计划开始日期" layoutconstraint="md:3"/>
+						<bunch layoutconstraint="md:9">
+							<input-inline width="medium">
+							<date name="query_jgksstart" placeholder="请输入起始日期" validate="{required:true}"/>
+							</input-inline>
+							<plaintext text="-"/>
+							<input-inline width="medium">
+							<date name="query_jgksend" placeholder="请输入结束日期" validate="{required:true}"/>
+							</input-inline>
+						</bunch>
+ 					</form-group>
+					<form-group>
+						<label for="query_rwksStart" text="任务计划完成时间" layoutconstraint="md:3"/>
+						<bunch layoutconstraint="md:9">
+							<input-inline width="medium">
+							<date name="query_jgjsstart" placeholder="请输入起始日期" validate="{required:true}"/>
+							</input-inline>
+							<plaintext text="-"/>
+							<input-inline width="medium">
+							<date name="query_jgjsend" placeholder="请输入结束日期" validate="{required:true}"/>
+							</input-inline>
+						</bunch>
+ 					</form-group>
+ 					<form-group>
+						<label for="query_rwzt" text="任务状态" layoutconstraint="md:3"/>
+					    <select name="query_rwzt" validate="{required:true}" dictionary="RWZT"  placeholder="请选择任务状态" layoutconstraint="md:4;"></select>
+ 					</form-group>
+				</form-body>
+			</form>
+		</modal-body>
+		<modal-footer>
+				<button name="closeqyeryModalClick1" label="取消" type="button" context="primary"  onClick="closeQueryWindow"></button>
+				<button name="qyeryModalClick" label="查询" type="button" context="primary" onClick="queryBtnClick"></button>
+		</modal-footer>
+	</modal>
+	<attribute name="javascript">
+	<![CDATA[
+		function resetQueryWindow() {
+	    	 $('#form-horizontal')[0].reset();
+	    }
+		function table_gdrwClickrow(rowid,status) {
+			ui.table("table_jgrwpcxx").search({val_scrw:"('"+rowid+"')"});
+		}
+		function table_pcxxClickrow(rowid,status) {
+			ui.table("table_gdjd").search({pcid:rowid});
+			openModalWindow();
+		}
+		
+		function backBtnClick() {
+			window.location.href=ui.getUrl("/pro/scrw/query_scrw");
+		}
+		
+		function prepare_jgrwpcxxTable() {
+		  	//var  rows = ui.table("table_jgrw").getRowids();
+		  	//if (rows.length>0) {
+		  	//	ui.table("table_jgrwpcxx").search({val_scrw:"('"+rows[0]+"')"});
+		  	//	ui.table("table_jgrw").selectRow(rows[0]);
+		 	// }else{
+		 	// 	ui.table("table_jgrwpcxx").search({val_scrw:"('')"});
+			//}
+		}
+		
+		function openModalWindow() {
+	    	ui.modal("gdModal").show();
+	    }
+	    function closeModalWindow() {
+	    	ui.modal("gdModal").hide();
+	    }
+		function openQueryWindow() {
+	    	ui.modal("qyeryModal").show();
+	    }
+	    function closeQueryWindow() {
+	    	ui.modal("qyeryModal").hide();
+	    }
+	    
+		function toPercent(rowid,colmodel,rowdata,action){
+			return (Math.round((rowdata.ywcsl/rowdata.jgsl) * 10000)/100).toFixed(2) + '%';
+		}
+		function toPercent_pc(rowid,colmodel,rowdata,action){
+			return (Math.round((rowdata.ywcsl/rowdata.pcsl) * 10000)/100).toFixed(2) + '%';
+		}
+		function toPercent_gd(rowid,colmodel,rowdata,action){
+			return (Math.round((rowdata.gdywcsl/rowdata.jgsl) * 10000)/100).toFixed(2) + '%';
+		}
+		var rowid;
+		
+		
+		function queryBtnClick(){
+			var data_row = {};
+			data_row.query_sign = 'query';
+			data_row.query_scrwbh = $('#query_scrwbh').val();
+			data_row.query_ljmc = $('#query_ljmc').val();
+			data_row.query_ljbh = $('#query_ljbh').val();
+			data_row.query_jgksstart = $('#query_jgksstart').val();
+			data_row.query_jgksend = $('#query_jgksend').val();
+			data_row.query_jgjsstart = $('#query_jgjsstart').val();
+			data_row.query_jgjsend = $('#query_jgjsend').val();
+			data_row.query_rwzt = $('#query_rwzt').val();
+			ui.table("table_jgrw").search(data_row);
+			closeQueryWindow();
+			//prepare_jgrwpcxxTable();
+		}
+	]]>
+	</attribute>
+</view>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="que" version="1.0.0" category="system">
+	<information>
+		<name>Query Management</name>
+		<vendor>
+			<name>Isesol isMES</name>
+			<url>http://www.isesol.com/</url>
+		</vendor>
+		<description>This module is developement for Real-time Inquiry.</description>
+		<license>AGPL</license>
+	</information>
+	<activities>
+		<activity name="jdgz" dialect="java" roles="MANUFACTURING_MANAGEMENT_ROLE" class="com.isesol.mes.ismes.que.activity.JdgzActivity"/>
+		<activity name="scxxsscx" dialect="java" roles="MANUFACTURING_MANAGEMENT_ROLE" class="com.isesol.mes.ismes.que.activity.ScxxsscxActivity"/>
+		<activity name="sbnlfz" dialect="java" roles="MANUFACTURING_MANAGEMENT_ROLE" class="com.isesol.mes.ismes.que.activity.SbnlfzcxActivity"/>
+	</activities>
+	<roles>
+		<role name="MANUFACTURING_MANAGEMENT_ROLE" label="生产管理人员_查询" description="生产管理相关" />
+	</roles>
+	<menus>
+		<!-- 生产管理（一级） -->
+		<category name="produce_manager" label="生产管理" icon="#539de7;Production_management"  weight="4"/>
+		<menu name="progress_tracking_list" label="进度跟踪" activity="jdgz" activity-method="query_jdgz"
+			category="produce_manager"  roles="MANUFACTURING_MANAGEMENT_ROLE" description="进度跟踪" icon="button" weight="40"/>
+		<!-- 现场监控（一级） -->
+		<category name="monitor_management" label="现场监控" icon="#f5c14f;Query_statistics"  weight="5"/><category name="monitor_management" label="现场监控" icon="#f5c14f;Query_statistics"  weight="5"/>
+		<category name="monitor_management" label="现场监控" icon="#f5c14f;Query_statistics"  weight="5"/>
+		<!--<menu name="scxxsscx_menu" label="实时查询" activity="scxxsscx" activity-method="scxxsscxIndex"
+			 category="monitor_management" roles="MANUFACTURING_MANAGEMENT_ROLE" description="实时查询" icon="button" weight="10"/>-->
+		<menu name="sbfhcx_menu" label="设备负荷查询" activity="sbnlfz" activity-method="sbnlfzcxIndex"
+			 category="monitor_management" roles="MANUFACTURING_MANAGEMENT_ROLE" description="设备负荷查询" icon="button" weight="30"/>
+	</menus>cd
+</module>

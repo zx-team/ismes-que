@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view name="scxxcx" title="生产信息实时查询">
+	<panel layoutconstraint="md:12">
+		<panel-body>
+			<form horizontal="true" name="form-scxxcx-head">
+				<form-body>
+					<form-group>
+						<label for="bm_query" text="部门" layoutconstraint="md:2"/>
+						<select name="bm_query" placeholder="请选择所属车间" 
+								  multiple="false" layoutconstraint="md:2" url="cjSelect" >
+						</select>
+						<select name="flag_query"  multiple="false" layoutconstraint="md:2"  
+							onChange="flag_query_change_func" >
+								<option value="0" label="不限" selected="true" />
+								<option value="1" label="生产任务编号" />
+								<option value="2" label="批次号" />
+								<option value="3" label="工单号" />
+						</select>
+						<!-- <text name="flag_text" readonly="false" layoutconstraint="md:4;" /> -->
+						<select name="flag_text" multiple="false" layoutconstraint="md:2" 
+							url="query_search" search = "true"/>
+						
+						<button name="queryBtn" label="查询"  type="button" context="primary" onClick="query_func"/>
+						<button name="resetBtn" label="重置"  type="reset" context="primary" onClick="reset_func"/>
+					</form-group>
+				</form-body>
+			</form>
+		</panel-body>
+	</panel>
+	
+	<panel heading="今日生产" layoutconstraint="md:6" >
+		<panel-body>
+			<plaintext text="本日计划 : " lead="true" type="strong" layoutconstraint="md:5;" context="primary" align = "center"/>
+			<plaintext text="本日生产 : " lead="true" type="strong" layoutconstraint="md:5;" context="success" align = "center"/>
+			<plaintext name="today_ratio" bind="today_ratio" layoutconstraint="md:2;" align = "center"/>
+			<plaintext name="today_plan" format="####" bind="today_plan"  lead="true" type="strong" layoutconstraint="md:5;" context="primary" align = "center"/>
+			<plaintext name="today_finish" format="####" bind="today_finish"  lead="true" type="strong" layoutconstraint="md:5;" context="success" align = "center"/>
+			<table name="table-today" showrownum="true" scroll="false"  height = "500"
+				url="table" multiselect="false" showpager="true" layoutconstraint="md:12;">
+				<attribute name="url"><![CDATA[table?time_frame_flag=day&ifPage=true]]></attribute>
+				<column label="id" name="id" key="true" sortable="true" hidden="true"/>
+				<column label="设备编号" name="sbbh" sortable="true" editable="false" />
+				<column label="计划" name="jh" sortable="true" editable="false" />
+				<column label="完成" name="wc" sortable="true" editable="true"/>
+				<column label="差异" name="cy" sortable="true"/>
+			</table>	
+		</panel-body>
+	</panel>
+	
+	<panel heading="本月生产" layoutconstraint="md:6" >
+		<panel-body>
+			<plaintext text="本月计划 : " lead="true" type="strong" layoutconstraint="md:5;" context="primary" align = "center"/>
+			<plaintext text="本月生产 : " lead="true" type="strong" layoutconstraint="md:5;" context="success" align = "center"/>
+			<plaintext name="month_ratio" bind="month_ratio" layoutconstraint="md:2;" align = "center"/>
+			<plaintext name="month_plan" format="####"  bind="month_plan"  lead="true" type="strong" layoutconstraint="md:5;" context="primary" align = "center"/>
+			<plaintext name="month_finish" format="####"  bind="month_finish"  lead="true" type="strong" layoutconstraint="md:5;" context="success" align = "center"/>
+			<table name="table-this_month" showrownum="true" scroll="false" height = "500"
+				url="table" multiselect="false" showpager="true" layoutconstraint="md:12;">
+				<attribute name="url"><![CDATA[table?time_frame_flag=month&ifPage=true]]></attribute>
+				<column label="id" name="id" key="true" sortable="true" hidden="true"/>
+				<column label="设备编号" name="sbbh" sortable="true" editable="false" />
+				<column label="计划" name="jh" sortable="true" editable="false" />
+				<column label="完成" name="wc" sortable="true" editable="true"/>
+				<column label="差异" name="cy" sortable="true"/>
+			</table>	
+		</panel-body>
+	</panel>
+	
+	<attribute name="javascript">
+	<![CDATA[
+		function reset_func(){
+			ui.select("bm_query").val('');
+	    	ui.select("flag_query").val('0');
+	    	ui.select("flag_text").val('');
+		}
+	
+		function query_func(){
+	    	var zzjgid = ui.select("bm_query").val();
+	    	var flag_query = ui.select("flag_query").val();
+	    	var flag_text = ui.select("flag_text").val();
+	    	
+			ui.table("table-today").search(
+				{time_frame_flag:'day',
+				 ifPage:'true',
+				 zzjgid:zzjgid,
+				 flag_query:flag_query,
+				 flag_text:flag_text}
+			);
+			
+			ui.table("table-this_month").search(
+				{time_frame_flag:'month',
+				 ifPage:'true',
+				 zzjgid:zzjgid,
+				 flag_query:flag_query,
+				 flag_text:flag_text}
+			);
+			
+			$.ajax({
+	             type: "GET",
+	             url:   ui.getRealUrl("getNumbers"),
+	             async: false,
+	             data: {zzjgid:zzjgid,flag_query:flag_query,flag_text:flag_text },
+	             success: function(data){
+	             	$("#month_ratio").html(data.month_ratio);
+	             	$("#month_plan").html(data.month_plan);
+	             	$("#month_finish").html(data.month_finish);
+	             	$("#today_ratio").html(data.today_ratio);
+	             	$("#today_plan").html(data.today_plan);
+	             	$("#today_finish").html(data.today_finish);
+	             }
+	         });
+	         
+		}
+		
+		
+        function flag_query_change_func(){
+        	ui.select('flag_text').val('');
+        	var typeValue = ui.select('flag_query').val();
+        	ui.select("flag_text").load({"type":typeValue});
+        }
+	]]>
+	</attribute>
+</view>

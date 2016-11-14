@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view name="sbnlfzcx" title="设备能力与负载查询" onReady="ready">
+	
+	<hidden name="end" bind="end"></hidden>
+	<hidden name="begin" bind="begin"></hidden>
+	<panel layoutconstraint="md:12" >
+		<panel-body>
+			<form horizontal="true" name="form-sbnlfzcx-head">
+				<form-body>
+					<form-group>
+						
+						<label for="date1" text="日期" layoutconstraint="md:1"/>
+						<bunch layoutconstraint="md:5">
+							<input-inline width="medium">
+							<date name="beginDate" placeholder="请输入起始日期"
+								 validate="{required:true}"  />
+							</input-inline>
+							<plaintext text="-"/>
+							<input-inline width="medium">
+							<date name="endDate" placeholder="请输入结束日期"  
+								 validate="{required:true}"/>
+							</input-inline>
+						</bunch>
+						
+						<label for="jgdybh_query" text="加工单元编号" layoutconstraint="md:1"/>
+						<text name="jgdybh_query" readonly="false" layoutconstraint="md:2;" />
+						
+						<label for="jgdymc_query" text="加工单元名称" layoutconstraint="md:1"/>
+						<text name="jgdymc_query" readonly="false" layoutconstraint="md:2;" />
+					</form-group>
+				</form-body>
+			</form>
+			<normal-actions>
+				<button name="queryBtn" icon="icon-query" label="查询"  type="button"  onClick="query_func" />
+				<button name="resetBtn" icon="icon-cancel" label="重置"  type="reset"  onClick="reset_func" />
+			</normal-actions>
+			<table name="table-sbnlfz" showrownum="true" scroll="false" height = "500"
+				url="table" multiselect="false" showpager="true" layoutconstraint="md:12;">
+				<attribute name="url"><![CDATA[table]]></attribute><!-- ?time_frame_flag=month&ifPage=true -->
+				<column label="加工单元编号" name="jgdybh" sortable="true" editable="false" />
+				<!-- <column label="id" name="jgdyid" key="true" sortable="true" hidden="false"/> -->
+				<column label="rowKey" name="rowKey" key="true" sortable="true" hidden="true"/>
+				<column label="加工单元名称" name="jgdymc" sortable="true" editable="false" />
+				<column label="计划加工时间(小时)" name="jgdy_shouldwork_hours" sortable="true" editable="false"/>
+				<column label="实际加工时间(小时)" name="jgdygzsj" sortable="true" editable="false"/>
+				<column label="设备负荷" name="sbfh" sortable="true" editable="true" type="progress"/>
+				
+					<subtable showrownum="false" scroll="false" showpager="false" 
+						minheight="160" editurl="" multiselect="false" url="subtable">
+						<column label="id" name="工单id" key="true" sortable="true" hidden="true"/>
+						<column label="箱号" name="xh"/>
+						<column label="工序组名称" name="gxzmc"/>
+						<column label="计划开始时间" name="jhkssj" type="datetime" />
+						<column label="计划结束时间" name="jhjssj" type="datetime"/>
+						<!-- <column label="计划加工时间" name="jgdy_shouldwork_hours" editable="false"/> -->
+						<column label="计划加工数量" name="jgsl"/>
+						<column label="范围内加工时间" name="gdgzsj" editable="false"/>
+						<column label="范围内报工数量" name="bgsl"/>
+					</subtable>
+			</table>	
+		</panel-body>
+	</panel>
+	
+	<attribute name="javascript">
+	<![CDATA[
+		function ready(){
+			ui.date("beginDate").val(ui.hidden("begin").val());
+			ui.date("endDate").val(ui.hidden("end").val());
+		}
+		
+		function query_func(){
+			var begin = ui.date("beginDate").val();
+			var end = ui.date("endDate").val();
+			var jgdybh = ui.text("jgdybh_query").val();
+			var jgdymc = ui.text("jgdymc_query").val();
+			
+			ui.table("table-sbnlfz").search(
+				{
+				 begin:begin,
+				 end:end,
+				 jgdybh:jgdybh,
+				 jgdymc:jgdymc}
+			);
+		}
+		
+		function reset_func(){
+			ui.date("beginDate").val(ui.hidden("begin").val());
+			ui.date("endDate").val(ui.hidden("end").val());
+						
+			ui.text("jgdybh_query").val("");
+			ui.text("jgdymc_query").val("");
+		}
+	
+	
+		/**
+         * 获取上一个月
+         *
+         * @date 格式为yyyy-mm-dd的日期，如：2014-01-25
+         */
+        function getPreMonth(date) {
+            var arr = date.split('-');
+            var year = arr[0]; //获取当前日期的年份
+            var month = arr[1]; //获取当前日期的月份
+            var day = arr[2]; //获取当前日期的日
+            var days = new Date(year, month, 0);
+            days = days.getDate(); //获取当前日期中月的天数
+            var year2 = year;
+            var month2 = parseInt(month) - 1;
+            if (month2 == 0) {
+                year2 = parseInt(year2) - 1;
+                month2 = 12;
+            }
+            var day2 = day;
+            var days2 = new Date(year2, month2, 0);
+            days2 = days2.getDate();
+            if (day2 > days2) {
+                day2 = days2;
+            }
+            if (month2 < 10) {
+                month2 = '0' + month2;
+            }
+            var t2 = year2 + '-' + month2 + '-' + day2;
+            return t2;
+        }
+        
+        /**
+         * 获取下一个月
+         *
+         * @date 格式为yyyy-mm-dd的日期，如：2014-01-25
+         */        
+        function getNextMonth(date) {
+            var arr = date.split('-');
+            var year = arr[0]; //获取当前日期的年份
+            var month = arr[1]; //获取当前日期的月份
+            var day = arr[2]; //获取当前日期的日
+            var days = new Date(year, month, 0);
+            days = days.getDate(); //获取当前日期中的月的天数
+            var year2 = year;
+            var month2 = parseInt(month) + 1;
+            if (month2 == 13) {
+                year2 = parseInt(year2) + 1;
+                month2 = 1;
+            }
+            var day2 = day;
+            var days2 = new Date(year2, month2, 0);
+            days2 = days2.getDate();
+            if (day2 > days2) {
+                day2 = days2;
+            }
+            if (month2 < 10) {
+                month2 = '0' + month2;
+            }
+        
+            var t2 = year2 + '-' + month2 + '-' + day2;
+            return t2;
+        }
+	]]>
+	</attribute>
+</view>

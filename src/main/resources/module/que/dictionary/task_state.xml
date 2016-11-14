@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<category name="RWZT" label="任务状态"  description="任务状态代码">
+	<field name="" value="10" label="未执行" parent="" state="valid"/>
+	<field name="" value="20" label="执行中" parent="" state="valid"/>
+	<field name="" value="30" label="已完成" parent="" state="valid"/>
+	<field name="" value="40" label="已终止" parent="" state="valid"/>
+</category>
